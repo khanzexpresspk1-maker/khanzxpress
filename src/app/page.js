@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 
 const CITIES = ["Islamabad","Karachi","Lahore","Rawalpindi","Faisalabad","Multan","Peshawar",
