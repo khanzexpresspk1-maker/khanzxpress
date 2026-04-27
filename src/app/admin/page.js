@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const ADMIN_EMAIL = "khanzexpress.pk1@gmail.com";
-const ADMIN_PASS = "admin123";
-
+function LoginPage({ onLogin }) {
+  const ADMIN_EMAIL = "khanzexpress.pk1@gmail.com";
+  const ADMIN_PASS = "admin123";
+  const [email, setEmail] = useState(ADMIN_EMAIL);
+  const [pass, setPass] = useState(ADMIN_PASS);
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
