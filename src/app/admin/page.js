@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
+const ADMIN_EMAIL = "khanzexpress.pk1@gmail.com";
+const ADMIN_PASS = "admin123";
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -86,12 +89,12 @@ function Badge({ status }) {
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
 function LoginPage({ onLogin }) {
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+  const [email, setEmail] = useState(ADMIN_EMAIL);
+  const [pass, setPass] = useState(ADMIN_PASS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const ADMIN_EMAIL = "khanzexpress12@gmail.com";
+  const ADMIN_EMAIL = "khanzexpress.pk1@gmail.com";
   const ADMIN_PASS = "admin123";
 
   const handleLogin = async () => {
@@ -943,11 +946,36 @@ function SubAdmins() {
 export default function AdminApp() {
   const [admin, setAdmin] = useState(null);
   const [page, setPage] = useState("dashboard");
+  const [checking, setChecking] = useState(true);
 
-  if (!admin) return <LoginPage onLogin={setAdmin} />;
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kzx_admin");
+      if (saved) { setAdmin(JSON.parse(saved)); }
+    } catch(e) {}
+    setChecking(false);
+  }, []);
+
+  const handleLogin = (data) => {
+    try { localStorage.setItem("kzx_admin", JSON.stringify(data)); } catch(e) {}
+    setAdmin(data);
+  };
+
+  const handleLogout = () => {
+    try { localStorage.removeItem("kzx_admin"); } catch(e) {}
+    setAdmin(null); setPage("dashboard");
+  };
+
+  if (checking) return (
+    <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#e8001d", fontSize: 18, fontWeight: 700 }}>Loading KhanZxpress Admin...</div>
+    </div>
+  );
+
+  if (!admin) return <LoginPage onLogin={handleLogin} />;
 
   return (
-    <Layout admin={admin} page={page} setPage={setPage} onLogout={() => { setAdmin(null); setPage("dashboard"); }}>
+    <Layout admin={admin} page={page} setPage={setPage} onLogout={handleLogout}>
       {page === "dashboard" && <Dashboard setPage={setPage} />}
       {page === "customers" && <Customers />}
       {page === "bookings" && <AllBookings />}
